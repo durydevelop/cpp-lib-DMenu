@@ -1,10 +1,3 @@
-/*
- * MenuLCD.cpp
- *
- *  Created on: 02/set/2013
- *      Author: dury
- */
-
 #include "DMenu.h"
 
 //! Contructor
@@ -16,27 +9,31 @@
 DMenu::DMenu(const char MenuItemName[], DMenuListener CallbackFunc, DMenu *ParentItem)
 {
 	Callback=CallbackFunc;
-	Parent=ParentItem;
-	ID=100;
+	if (ParentItem == NULL) {
+        Parent=this;
+	}
+	else {
+        Parent=ParentItem;
+	}
+	ID=rand();
 	ItemIndex=-1;
 	ItemsCount=0;
 	MaxItemTextLen=DEFAULT_MAX_ITEM_TEXT_LEN;
+	Name=NULL;
 	SetName(MenuItemName);
-	CurrItem=nullptr;
+	//CurrItem=NULL;
 }
 
 //! Destructor
 DMenu::~DMenu()
 {
 	// free all created Items
-	/*
-	if (Items.size() > 0) {
-		for (unsigned int ixI=0;ixI<Items.size();ixI++) {
-			delete Items.at(ixI);
+	if (ItemsCount > 0) {
+		for (short int ixI=0;ixI<ItemsCount;ixI++) {
+			delete Items[ixI];
 		}
-		Items.clear();
+		free(Items);
 	}
-	*/
 }
 
 //! Set the name of Item.
@@ -47,8 +44,15 @@ DMenu::~DMenu()
  */
 void DMenu::SetName(const char ItemName[])
 {
-	Serial.println(ItemName);
-	strncpy(Name,ItemName,MaxItemTextLen);
+    size_t len=strlen(ItemName);
+	if (len > MaxItemTextLen) {
+        len=MaxItemTextLen;
+	}
+	if (Name == NULL) {
+        Name=new char[len+1];
+    }
+	strncpy(Name,ItemName,len);
+	Name[len]='\0';
 }
 
 //! Add a new Item to menu
@@ -64,7 +68,7 @@ DMenu* DMenu::AddItem(const char ItemName[])
 			// Allocate first DMenu pointer
 			Items=(DMenu **) malloc(sizeof(DMenu*));
 			if (Items == NULL) {
-				return nullptr;
+				return NULL;
 			}
 		}
 		else {
@@ -78,7 +82,8 @@ DMenu* DMenu::AddItem(const char ItemName[])
 		}
 
 		// Create new DMenu and assign it to last array pointer
-		Items[ItemsCount]=new DMenu(ItemName,Callback,this);
+		DMenu *NewItem=new DMenu(ItemName,Callback,this);
+		Items[ItemsCount]=NewItem;
 		// Inc items counter
 		ItemsCount++;
 		return(Items[ItemsCount]);
@@ -104,7 +109,10 @@ short int DMenu::AddItems(vector<string> Names)
 //! @return current selected Item inside this
 DMenu* DMenu::GetCurrItem(void)
 {
-	return(CurrItem);
+	if (ItemIndex == -1) {
+        return(NULL);
+	}
+	return(Items[ItemIndex]);
 }
 
 //! Change current selected Item to previous one
@@ -113,7 +121,17 @@ DMenu* DMenu::GetCurrItem(void)
  */
 DMenu* DMenu::Up(void)
 {
-	if (ItemIndex > 0) ItemIndex--;
+	if (ItemsCount == 0) {
+        return(NULL);
+	}
+
+	if (ItemIndex == -1) {
+        ItemIndex=0;
+	}
+	else if (ItemIndex > 0) {
+            ItemIndex--;
+	}
+
 	return(Items[ItemIndex]);
 }
 
@@ -123,7 +141,17 @@ DMenu* DMenu::Up(void)
  */
 DMenu* DMenu::Down(void)
 {
-	if ((unsigned short int) ItemIndex < (ItemsCount-1)) ItemIndex++;
+	if (ItemsCount == 0) {
+        return(NULL);
+	}
+
+	if (ItemIndex == -1) {
+        ItemIndex=ItemsCount-1;
+	}
+	else if (ItemIndex < (ItemsCount-1)) {
+        ItemIndex++;
+	}
+
 	return(Items[ItemIndex]);
 }
 
@@ -134,7 +162,9 @@ DMenu* DMenu::Down(void)
 DMenu* DMenu::Back(void)
 {
 	if (Parent != NULL) {
-		Callback(Parent,DMENU_ACTION_BACK);
+		if (Callback != NULL) {
+            Callback(Parent,DMENU_ACTION_BACK);
+		}
 	}
 	return(Parent);
 }
@@ -145,8 +175,10 @@ DMenu* DMenu::Back(void)
  */
 void DMenu::Select(void)
 {
-	if (CurrItem != NULL) {
-		Callback(CurrItem,DMENU_ACTION_SELECT);
+	if (ItemIndex != -1) {
+        if (Callback != NULL) {
+            Callback(Items[ItemIndex],DMENU_ACTION_SELECT);
+        }
 	}
 }
 

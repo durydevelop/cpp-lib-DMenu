@@ -1,24 +1,31 @@
 /*
- * MenuLCD.h
- *
- *  Created on: 02/set/2013
- *      Author: dury
+ *  Class:      DMenu
+ *  Created on: 2018
+ *  Author:     dury
+ *  Version:    1.0
  */
 
 #ifndef DMENU_H_
 #define DMENU_H_
+
+#include <cstring>
+#include <cstdlib>
+
+using namespace std;
 
 #define DMENU_ACTION_SELECT 1
 #define DMENU_ACTION_BACK 2
 
 //#include "mbed.h"
 
-#if defined(ARDUINO) && ARDUINO >= 100
-	#include "Arduino.h"
-#else
-	#include "wiring.h"
-	#include "WProgram.h"
-#endif
+#if defined(ARDUINO)
+    #if ARDUINO >= 100
+        #include "Arduino.h"
+    #else
+        #include "wiring.h"
+        #include "WProgram.h"
+    #endif
+#endif // defined
 
 
 #ifndef BYTE
@@ -31,7 +38,7 @@
 class DMenu {
 	public:
 		typedef void (*DMenuListener) (DMenu *MenuItem, BYTE Action);
-		DMenu(const char MenuItemName[], DMenuListener CallbackFunc, DMenu *Parent);
+		DMenu(const char MenuItemName[], DMenuListener CallbackFunc, DMenu *Parent=NULL);
 		~DMenu();
 		void SetName(const char ItemName[]);
 		DMenu* AddItem(const char Name[]);
@@ -48,9 +55,9 @@ class DMenu {
 
 	private:
 		DMenuListener Callback;
-		char* Name;
+		char *Name;
 		DMenu *Parent;
-		DMenu *CurrItem;
+		//DMenu *CurrItem;
 		short int ItemIndex; //! Index used to handle the current selected Item
 		short int ItemsCount;
 		short int ID;
