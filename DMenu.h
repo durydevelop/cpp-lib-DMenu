@@ -8,11 +8,6 @@
 #ifndef DMENU_H_
 #define DMENU_H_
 
-#include <cstring>
-#include <cstdlib>
-
-using namespace std;
-
 #define DMENU_ACTION_SELECT 1
 #define DMENU_ACTION_BACK 2
 
@@ -25,7 +20,13 @@ using namespace std;
         #include "wiring.h"
         #include "WProgram.h"
     #endif
+#else
+	#include <cstring>
+	#include <cstdlib>
+	using namespace std;
 #endif // defined
+
+
 
 
 #ifndef BYTE
@@ -45,25 +46,24 @@ class DMenu {
 		DMenu* Up(void);
 		DMenu* Down(void);
 		DMenu* Back(void);
-		void Select(void);
+		DMenu* Select(void);
 
 		DMenu* GetCurrItem(void);
 		short int GetItemsCount(void);
 		const char* GetName(void);
 		short int GetID(void);
-
+		bool Loop;
 
 	private:
 		DMenuListener Callback;
 		char *Name;
 		DMenu *Parent;
-		//DMenu *CurrItem;
 		short int ItemIndex; //! Index used to handle the current selected Item
 		short int ItemsCount;
 		short int ID;
 		BYTE MaxItemTextLen;
 		DMenu** Items;
-		// TODO: bool Loop;
+
 };
 
 #endif /* MENULCD_H_ */

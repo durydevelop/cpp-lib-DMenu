@@ -18,10 +18,10 @@ DMenu::DMenu(const char MenuItemName[], DMenuListener CallbackFunc, DMenu *Paren
 	ID=rand();
 	ItemIndex=-1;
 	ItemsCount=0;
+	Loop=false;
 	MaxItemTextLen=DEFAULT_MAX_ITEM_TEXT_LEN;
 	Name=NULL;
 	SetName(MenuItemName);
-	//CurrItem=NULL;
 }
 
 //! Destructor
@@ -110,7 +110,7 @@ short int DMenu::AddItems(vector<string> Names)
 DMenu* DMenu::GetCurrItem(void)
 {
 	if (ItemIndex == -1) {
-        return(NULL);
+        return(this);
 	}
 	return(Items[ItemIndex]);
 }
@@ -122,11 +122,16 @@ DMenu* DMenu::GetCurrItem(void)
 DMenu* DMenu::Up(void)
 {
 	if (ItemsCount == 0) {
-        return(NULL);
+        return(this);
 	}
 
 	if (ItemIndex == -1) {
         ItemIndex=0;
+	}
+	else if (ItemIndex == 0) {
+		if (Loop) {
+			ItemIndex=ItemsCount-1;
+		}
 	}
 	else if (ItemIndex > 0) {
             ItemIndex--;
@@ -142,13 +147,18 @@ DMenu* DMenu::Up(void)
 DMenu* DMenu::Down(void)
 {
 	if (ItemsCount == 0) {
-        return(NULL);
+        return(this);
 	}
 
 	if (ItemIndex == -1) {
         ItemIndex=ItemsCount-1;
 	}
-	else if (ItemIndex < (ItemsCount-1)) {
+	else if (ItemIndex == ItemsCount-1) {
+		if (Loop) {
+			ItemIndex=0;
+		}
+	}
+	else if (ItemIndex < ItemsCount-1) {
         ItemIndex++;
 	}
 
@@ -161,7 +171,7 @@ DMenu* DMenu::Down(void)
  */
 DMenu* DMenu::Back(void)
 {
-	if (Parent != NULL) {
+	if (Parent != this) {
 		if (Callback != NULL) {
             Callback(Parent,DMENU_ACTION_BACK);
 		}
@@ -173,13 +183,17 @@ DMenu* DMenu::Back(void)
 /**
  * N.B. Callback will be called only if there is a selected Item.
  */
-void DMenu::Select(void)
+DMenu* DMenu::Select(void)
 {
-	if (ItemIndex != -1) {
-        if (Callback != NULL) {
-            Callback(Items[ItemIndex],DMENU_ACTION_SELECT);
-        }
+	if (ItemIndex == -1) {
+		return(this);
 	}
+
+    if (Callback != NULL) {
+    	Callback(Items[ItemIndex],DMENU_ACTION_SELECT);
+    }
+
+	return (Items[ItemIndex]);
 }
 
 //! @return name string of this Item
