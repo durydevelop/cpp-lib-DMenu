@@ -8,8 +8,11 @@
 #ifndef DMENU_H_
 #define DMENU_H_
 
-#define DMENU_ACTION_SELECT 1
-#define DMENU_ACTION_BACK 2
+#define DMENU_ACTION_UP     1
+#define DMENU_ACTION_DOWN   2
+#define DMENU_ACTION_BACK   3
+#define DMENU_ACTION_SELECT 4
+
 
 //#include "mbed.h"
 
@@ -27,7 +30,7 @@
 #endif // defined
 
 
-
+#include <random>
 
 #ifndef BYTE
 	typedef unsigned char BYTE;
@@ -42,16 +45,19 @@ class DMenu {
 		DMenu(const char MenuItemName[], DMenuListener CallbackFunc, DMenu *Parent=NULL);
 		~DMenu();
 		void SetName(const char ItemName[]);
-		DMenu* AddItem(const char Name[]);
+		short int AddItem(const char Name[], bool SetCurrent=false);
 		DMenu* Up(void);
 		DMenu* Down(void);
 		DMenu* Back(void);
 		DMenu* Select(void);
 
+		DMenu* GetItem(short int Index);
 		DMenu* GetCurrItem(void);
+		DMenu *GetParent(void);
 		short int GetItemsCount(void);
 		const char* GetName(void);
 		short int GetID(void);
+		short int GetCurrItemIndex(void);
 		bool Loop;
 
 	private:

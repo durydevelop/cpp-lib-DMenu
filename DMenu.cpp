@@ -15,7 +15,7 @@ DMenu::DMenu(const char MenuItemName[], DMenuListener CallbackFunc, DMenu *Paren
 	else {
         Parent=ParentItem;
 	}
-	ID=rand();
+	ID=rand() % sizeof(short int) + 1;
 	ItemIndex=-1;
 	ItemsCount=0;
 	Loop=false;
@@ -58,17 +58,18 @@ void DMenu::SetName(const char ItemName[])
 //! Add a new Item to menu
 /** The item is added to the end
  * @param ItemName	->	Name of Item
+ * @param SetCurrent	->	if true set new Item as current one
  *
  * @return a pointer to new Item
  */
-DMenu* DMenu::AddItem(const char ItemName[])
+short int DMenu::AddItem(const char ItemName[], bool SetCurrent)
 {
 		if (ItemsCount == 0) {
 			// No Items yet
 			// Allocate first DMenu pointer
 			Items=(DMenu **) malloc(sizeof(DMenu*));
 			if (Items == NULL) {
-				return NULL;
+				return 0;
 			}
 		}
 		else {
@@ -83,10 +84,20 @@ DMenu* DMenu::AddItem(const char ItemName[])
 
 		// Create new DMenu and assign it to last array pointer
 		DMenu *NewItem=new DMenu(ItemName,Callback,this);
+		if (NewItem == NULL) {
+            return 0;
+		}
+
 		Items[ItemsCount]=NewItem;
 		// Inc items counter
 		ItemsCount++;
-		return(Items[ItemsCount]);
+
+		if (SetCurrent) {
+            // Set as current item
+            ItemIndex=ItemsCount-1;
+		}
+
+		return(NewItem->GetID());
 }
 
 //! Add a list of Items
@@ -106,13 +117,38 @@ short int DMenu::AddItems(vector<string> Names)
 }
 */
 
-//! @return current selected Item inside this
+//! @return Item at Index position
+DMenu* DMenu::GetItem(short int Index)
+{
+    if (ItemsCount == 0) {
+        return(this);
+    }
+
+    return(Items[Index]);
+}
+
+//! @return current selected Item inside this Menu
 DMenu* DMenu::GetCurrItem(void)
 {
 	if (ItemIndex == -1) {
         return(this);
 	}
 	return(Items[ItemIndex]);
+}
+
+//!  @return parent Item
+/**
+* N.B. If this menu has no Parent the function return this
+**/
+DMenu *DMenu::GetParent(void)
+{
+    return(Parent);
+}
+
+//! @return numbers of DMenu Items in this Menu
+short int DMenu::GetItemsCount(void)
+{
+    return(ItemsCount);
 }
 
 //! Change current selected Item to previous one
@@ -136,6 +172,10 @@ DMenu* DMenu::Up(void)
 	else if (ItemIndex > 0) {
             ItemIndex--;
 	}
+
+	if (Callback != NULL) {
+        Callback(Items[ItemIndex],DMENU_ACTION_UP);
+    }
 
 	return(Items[ItemIndex]);
 }
@@ -162,6 +202,10 @@ DMenu* DMenu::Down(void)
         ItemIndex++;
 	}
 
+	if (Callback != NULL) {
+        Callback(Items[ItemIndex],DMENU_ACTION_DOWN);
+    }
+
 	return(Items[ItemIndex]);
 }
 
@@ -171,18 +215,16 @@ DMenu* DMenu::Down(void)
  */
 DMenu* DMenu::Back(void)
 {
-	if (Parent != this) {
-		if (Callback != NULL) {
-            Callback(Parent,DMENU_ACTION_BACK);
-		}
-	}
+	if (Callback != NULL) {
+        Callback(Parent,DMENU_ACTION_BACK);
+    }
 	return(Parent);
 }
 
 //! Fire a Callback event sending the current selected Item as argument
 /**
  * N.B. Callback will be called only if there is a selected Item.
- */
+ **/
 DMenu* DMenu::Select(void)
 {
 	if (ItemIndex == -1) {
@@ -202,8 +244,18 @@ const char* DMenu::GetName(void)
 	return(Name);
 }
 
-//! @return ID of this Item
+//! @return the uniqe ID of this Item
 short int DMenu::GetID(void)
 {
 	return(ID);
+}
+
+//! @return zero based index of current selected item
+/**
+* if -1 is returned, no item is selected
+**/
+
+short int DMenu::GetCurrItemIndex(void)
+{
+	return(ItemIndex);
 }
