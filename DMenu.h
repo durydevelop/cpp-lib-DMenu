@@ -29,9 +29,6 @@
 	using namespace std;
 #endif // defined
 
-
-#include <random>
-
 #ifndef BYTE
 	typedef unsigned char BYTE;
 #endif
@@ -42,7 +39,7 @@
 class DMenu {
 	public:
 		typedef void (*DMenuListener) (DMenu *MenuItem, BYTE Action);
-		DMenu(const char MenuItemName[], DMenuListener CallbackFunc, DMenu *Parent=NULL);
+		DMenu(const char MenuItemName[], DMenuListener CallbackFunc=NULL, DMenu *Parent=NULL);
 		~DMenu();
 		void SetName(const char ItemName[]);
 		short int AddItem(const char Name[], bool SetCurrent=false);
