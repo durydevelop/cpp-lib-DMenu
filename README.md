@@ -3,7 +3,7 @@
 ***
 DMenu is a class to rappresent a single node menu structure in memory. You can create separate menu but they can be nested to create complex menu.
 ***
-####Specifications
+#### Specifications
 
 It is written in standard C++ to maximize compatibility with most of compiling toolchains specially for embedded micro contoller systems.
 
@@ -13,11 +13,11 @@ You can associate a callback function to call when an action is executed (es to 
 
 It works like a virtual rappresentation of a menu, so, You can print it using printing api of your compiling environment.
 
-####How to use:
+#### How to use:
 
--Widhout callback:
+- Widhout callback:
 
-''' C++
+```C++
 DMenu *Menu=new DMenu("MainPage");
 short id1=Menu->AddItem("Item1",true);
 short id2=Menu->AddItem("Item2");
@@ -100,8 +100,9 @@ short ID_DIAG_IO;
     delete Menu;
     ncursesEnd();
 }
-'''
+```
 
+```C++
 void MenuAction(DMenu *MenuItem, BYTE Action)
 {
     if (MenuItem != NULL) {
@@ -126,3 +127,4 @@ void MenuAction(DMenu *MenuItem, BYTE Action)
         }
     }
 }
+```

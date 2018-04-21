@@ -60,7 +60,7 @@ void DMenu::SetName(const char ItemName[])
  * @param ItemName	->	Name of Item
  * @param SetCurrent	->	if true set new Item as current one
  *
- * @return a pointer to new Item
+ * @return ID of the created item or 0 if eny error occours
  */
 short int DMenu::AddItem(const char ItemName[], bool SetCurrent)
 {
@@ -92,8 +92,8 @@ short int DMenu::AddItem(const char ItemName[], bool SetCurrent)
 		// Inc items counter
 		ItemsCount++;
 
-		if (SetCurrent) {
-            // Set as current item
+		if (SetCurrent || ItemsCount == 1) {
+            // Set as current item (also if it is the first one)
             ItemIndex=ItemsCount-1;
 		}
 
@@ -244,7 +244,7 @@ const char* DMenu::GetName(void)
 	return(Name);
 }
 
-//! @return the uniqe ID of this Item
+//! @return ID of this Item
 short int DMenu::GetID(void)
 {
 	return(ID);
