@@ -18,37 +18,43 @@ It works like a virtual rappresentation of a menu, so, You can print it using pr
 - Widhout callback:
 
 ```C++
-DMenu *Menu=new DMenu("MainPage");
-short id1=Menu->AddItem("Item1",true);
-short id2=Menu->AddItem("Item2");
-
-    wchar_t ch;
-    do {
-        PrintMenu(Menu);
-        ch=getch();
-        switch (ch) {
-            case KEY_UP:
-                Item=CurrItem->Up();
-                break;
-            case KEY_DOWN:
-                Item=CurrItem->Down();
-                break;
-            case KEY_LEFT:
-                Item=CurrItem->Back();
-                CurrItem=Item;
-                break;
-            case KEY_RIGHT:
-            case KEY_ENTER:
-                Item=CurrItem->Select();
-                if (Item->GetID() == ID_DIAG_WHEELS) WheelsDiag();
-                break;
-            case KEY_BACKSPACE:
-                return;
-            default:
-                break;
-        }
-    }while(ch != 'q');
+  DMenu *Menu=new DMenu("MainPage");
+  short id1=Menu->AddItem("Item1",true);
+  short id2=Menu->AddItem("Item2");
+  DMenu *CurrItem=Menu;
+  DMenu *Item;
+  wchar_t ch;
     
+  do {
+    PrintMenu(Menu);
+    ch=getch();
+    switch (ch) {
+      case KEY_UP:
+	Item=CurrItem->Up();
+	break;
+      case KEY_DOWN:
+	Item=CurrItem->Down();
+	break;
+      case KEY_LEFT:
+	Item=CurrItem->Back();
+	CurrItem=Item;
+	break;
+      case KEY_RIGHT:
+      case KEY_ENTER:
+	Item=CurrItem->Select();
+	if (Item->GetID() == ID_DIAG_WHEELS) WheelsDiag();
+	break;
+      case KEY_BACKSPACE:
+	return;
+      default:
+	break;
+    }
+}while(ch != 'q');
+```
+
+- Widhout callback:
+
+```C++
 
 short ID_DIAG_WHEELS;
 short ID_DIAG_HEAD;
