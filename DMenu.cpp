@@ -1,12 +1,27 @@
 #include "DMenu.h"
 
+//! Contructor 1
+/**
+ * @param MenuItemName  ->	name of new Menu Item
+ * @param ParentItem    ->	pointer to the parent Item of the new one. If parameter is NULL the Menu Item is the root one and Back() does't fire the Callback
+ */
+DMenu::DMenu(const char MenuItemName[], DMenu *ParentItem)
+{
+    Init(MenuItemName,NULL,ParentItem);
+}
+
 //! Contructor
 /**
- * @param MenuItemName	->	name of new Menu Item
- * @param CallbackFunc	->	pointer to the DMenuListener function that will be called on Select() or Back() call
- * @param ParentItem	->	pointer to the parent Item of the new one. If parameter is NULL the Menu Item is the root one and Back() does't fire the Callback
+ * @param MenuItemName  ->	name of new Menu Item
+ * @param CallbackFunc  ->	pointer to the DMenuListener function that will be called on Select() or Back() call
+ * @param ParentItem    ->	pointer to the parent Item of the new one. If parameter is NULL the Menu Item is the root one and Back() does't fire the Callback
  */
 DMenu::DMenu(const char MenuItemName[], DMenuListener CallbackFunc, DMenu *ParentItem)
+{
+    Init(MenuItemName,CallbackFunc,ParentItem);
+}
+
+void DMenu::Init(const char MenuItemName[], DMenuListener CallbackFunc, DMenu *ParentItem)
 {
 	Callback=CallbackFunc;
 	if (ParentItem == NULL) {
@@ -15,11 +30,11 @@ DMenu::DMenu(const char MenuItemName[], DMenuListener CallbackFunc, DMenu *Paren
 	else {
         Parent=ParentItem;
 	}
-	ID=rand() % sizeof(short int) + 1;
+	ID=rand() % DMENU_MAX_ITEMS + 1;
 	ItemIndex=-1;
 	ItemsCount=0;
 	Loop=false;
-	MaxItemTextLen=DEFAULT_MAX_ITEM_TEXT_LEN;
+	MaxItemTextLen=DMENU_DEFAULT_MAX_ITEM_TEXT_LEN;
 	Name=NULL;
 	SetName(MenuItemName);
 }

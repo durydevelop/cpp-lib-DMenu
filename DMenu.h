@@ -8,12 +8,6 @@
 #ifndef DMENU_H_
 #define DMENU_H_
 
-#define DMENU_ACTION_UP     1
-#define DMENU_ACTION_DOWN   2
-#define DMENU_ACTION_BACK   3
-#define DMENU_ACTION_SELECT 4
-
-
 //#include "mbed.h"
 
 #if defined(ARDUINO)
@@ -33,14 +27,21 @@
 	typedef unsigned char BYTE;
 #endif
 
-#define DEFAULT_MAX_ITEM_TEXT_LEN 21
-#define MAX_ID 32768
+// DMenu defines
+#define DMENU_DEFAULT_MAX_ITEM_TEXT_LEN 21
+#define DMENU_MAX_ITEMS 255
+#define DMENU_ACTION_UP     1
+#define DMENU_ACTION_DOWN   2
+#define DMENU_ACTION_BACK   3
+#define DMENU_ACTION_SELECT 4
 
 class DMenu {
 	public:
 		typedef void (*DMenuListener) (DMenu *MenuItem, BYTE Action);
+		DMenu(const char MenuItemName[], DMenu *Parent);
 		DMenu(const char MenuItemName[], DMenuListener CallbackFunc=NULL, DMenu *Parent=NULL);
 		~DMenu();
+		void Init(const char MenuItemName[], DMenuListener CallbackFunc, DMenu *ParentItem);
 		void SetName(const char ItemName[]);
 		short int AddItem(const char Name[], bool SetCurrent=false);
 		DMenu* Up(void);
