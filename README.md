@@ -1,4 +1,7 @@
-# DMenu class to easy create menu structure
+# readme under construction
+***
+
+# Easy create menu structure
 
 ***
 DMenu is a class to rappresent a single node menu structure in memory. You can create separate menu but they can be nested to create complex menu.
