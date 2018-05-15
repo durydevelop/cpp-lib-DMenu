@@ -21,6 +21,7 @@ DMenu::DMenu(const char MenuItemName[], DMenuListener CallbackFunc, DMenu *Paren
     Init(MenuItemName,CallbackFunc,ParentItem);
 }
 
+//! Initialize all stuffs from constructors
 void DMenu::Init(const char MenuItemName[], DMenuListener CallbackFunc, DMenu *ParentItem)
 {
 	Callback=CallbackFunc;
