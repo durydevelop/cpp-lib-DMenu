@@ -1,7 +1,4 @@
-# readme under construction
-***
-
-# Easy create menu structure
+# Easy create menu structure container to be used for implementing menus, designed especially for little display handled by micro controllers.
 
 ***
 DMenu is a class to rappresent a single node menu structure in memory. You can create separate menu but they can be nested to create complex menu.
